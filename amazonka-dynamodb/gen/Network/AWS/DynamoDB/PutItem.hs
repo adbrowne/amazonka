@@ -544,20 +544,25 @@ instance ToHeaders PutItem where
 
 instance ToJSON PutItem where
         toJSON PutItem'{..}
-          = object
-              ["ReturnValues" .= _piReturnValues,
-               "ExpressionAttributeNames" .=
+          = object $
+              catMaybes [
+               maybePair "ReturnValues" _piReturnValues,
+               maybePair "ExpressionAttributeNames" 
                  _piExpressionAttributeNames,
-               "ReturnConsumedCapacity" .=
+               maybePair "ReturnConsumedCapacity" 
                  _piReturnConsumedCapacity,
-               "ExpressionAttributeValues" .=
+               maybePair "ExpressionAttributeValues" 
                  _piExpressionAttributeValues,
-               "ReturnItemCollectionMetrics" .=
+               maybePair "ReturnItemCollectionMetrics" 
                  _piReturnItemCollectionMetrics,
-               "ConditionExpression" .= _piConditionExpression,
-               "ConditionalOperator" .= _piConditionalOperator,
-               "Expected" .= _piExpected,
-               "TableName" .= _piTableName, "Item" .= _piItem]
+               maybePair "ConditionExpression" _piConditionExpression,
+               maybePair "ConditionalOperator" _piConditionalOperator,
+               maybePair "Expected" _piExpected,
+               Just $ "TableName" .= _piTableName,
+               Just $ "Item" .= _piItem]
+           where
+             maybePair k x = fmap (\v -> k .= v) x
+             catMaybes xs = [x | Just x <- xs]
 
 instance ToPath PutItem where
         toPath = const "/"
