@@ -35,6 +35,8 @@ library
         , bytestring
         , conduit
         , conduit-extra
+        , unordered-containers
+        , aeson
         , exceptions
         , lens
         , semigroups

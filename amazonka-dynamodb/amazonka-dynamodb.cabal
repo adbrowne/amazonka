@@ -177,6 +177,7 @@ library
 
     build-depends:
           amazonka-core == 1.1.0.*
+        , aeson
         , base          >= 4.7     && < 5
 
 test-suite amazonka-dynamodb-test

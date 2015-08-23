@@ -20,6 +20,8 @@ module Network.AWS.DynamoDB.Types.Product where
 
 import           Network.AWS.DynamoDB.Types.Sum
 import           Network.AWS.Prelude
+import           Data.Aeson
+import           Data.Aeson.Types
 
 -- | Represents an attribute for describing the key schema for the table and
 -- indexes.
@@ -193,11 +195,22 @@ instance FromJSON AttributeValue where
 
 instance ToJSON AttributeValue where
         toJSON AttributeValue'{..}
-          = object
-              ["L" .= _avL, "M" .= _avM, "NS" .= _avNS,
-               "NULL" .= _avNULL, "N" .= _avN, "BS" .= _avBS,
-               "B" .= _avB, "SS" .= _avSS, "S" .= _avS,
-               "BOOL" .= _avBOOL]
+          = object $
+              catMaybes [
+               maybePair "L" _avL,
+               maybePair "M" _avM,
+               maybePair "NS" _avNS,
+               maybePair "NULL" _avNULL,
+               maybePair "N" _avN,
+               maybePair "BS" _avBS,
+               maybePair "B" _avB,
+               maybePair "SS" _avSS,
+               maybePair "S" _avS,
+               maybePair "BOOL" _avBOOL]
+          where
+            maybePair :: ToJSON a => Text -> Maybe a -> Maybe Pair
+            maybePair k x = fmap (\v -> k .= v) x
+            catMaybes xs = [x | Just x <- xs]
 
 -- | For the /UpdateItem/ operation, represents the attributes to be
 -- modified, the action to perform on each, and the new value for each.

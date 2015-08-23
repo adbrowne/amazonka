@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE FlexibleContexts #-}
 
 -- |
 -- Module      : Example.DynamoDB
@@ -16,6 +17,7 @@ import           Control.Monad.Trans.AWS
 import           Data.ByteString         (ByteString)
 import           Data.Conduit
 import qualified Data.Conduit.List       as CL
+import qualified Data.HashMap.Strict     as HM
 import           Data.Monoid
 import           Data.Text               (Text)
 import qualified Data.Text.IO            as Text
@@ -50,6 +52,19 @@ printTables r h = do
     -- by manually constructing it:
     -- let env' = Override (svcEndpoint .~ const (Endpoint ...))
     -- runResourceT . runAWST env' $
+
+putItemTest r h = do
+    lgr <- newLogger Debug stdout
+    env <- newEnv r Discover <&> envLogger .~ lgr
+
+    runResourceT . runAWST env $ do
+        -- Scoping the endpoint change using 'endpoint':
+--        endpoint (redirect h) $ do
+            say $ "Listing all tables in region " <> toText r
+            let attribs = HM.fromList [
+                  ("streamId", set avS (Just "Blah") attributeValue),
+                  ("eventNumber", set avN (Just "1") attributeValue) ]
+            send $ putItem "testtable-9537355991" & (set piItem attribs)
 
 redirect :: Maybe (ByteString, Int) -> Endpoint -> Endpoint
 redirect Nothing       = id
