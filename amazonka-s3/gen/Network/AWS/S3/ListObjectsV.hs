@@ -177,7 +177,7 @@ instance ToQuery ListObjectsV where
                "fetch-owner" =: _lFetchOwner, "prefix" =: _lPrefix,
                "encoding-type" =: _lEncodingType,
                "max-keys" =: _lMaxKeys, "delimiter" =: _lDelimiter,
-               "list-type=2"]
+               "list-type" =: Just (2 :: Int)]
 
 -- | /See:/ 'listObjectsVResponse' smart constructor.
 data ListObjectsVResponse = ListObjectsVResponse'
